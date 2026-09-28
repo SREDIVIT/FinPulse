@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "server": "npm --prefix server run dev",
     "server:start": "npm --prefix server start",
-    "server:seed": "npm --prefix server run seed"
+    "server:seed": "npm --prefix server run seed",
+    "server:test-db": "npm --prefix server run test:db"
   },
   "dependencies": {
     "lucide-react": "^1.30.0",

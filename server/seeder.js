@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { getMongoUri, maskUri } from './config/db.js';
 import User from './models/User.js';
 import Transaction from './models/Transaction.js';
 import Budget from './models/Budget.js';
@@ -7,6 +10,11 @@ import Goal from './models/Goal.js';
 import Subscription from './models/Subscription.js';
 import Notification from './models/Notification.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 dotenv.config();
 
 const DEMO_USER = {
@@ -65,12 +73,15 @@ const SEED_NOTIFICATIONS = [
 ];
 
 const connect = async () => {
-  const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/fintrack';
+  const uri = getMongoUri();
+  const safeUri = maskUri(uri);
   try {
+    console.log(`[Seeder] Connecting to MongoDB (${safeUri})...`);
     await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
-    console.log('[Seeder] Connected to MongoDB');
+    console.log('[Seeder] Connected to MongoDB successfully.');
   } catch (err) {
     console.error(`[Seeder] Could not connect to MongoDB: ${err.message}`);
+    console.error(`[Seeder] Please check MONGO_URI in your .env file.`);
     process.exit(1);
   }
 };
